@@ -22,6 +22,8 @@ def generate_plot():
     tokenizer = GPT2Tokenizer.from_pretrained('gpt2')
 
     text = request.form['text']
+    min_font_size = int(request.form['min_font_size'])
+    max_font_size = int(request.form['max_font_size'])
     inputs = tokenizer.encode(text, return_tensors='pt')
     outputs = model(inputs)
     all_layer_attentions = outputs.attentions
@@ -29,7 +31,8 @@ def generate_plot():
     last_layer_attentions = all_layer_attentions[-1][0, 0, :, :].detach().numpy()
     tokens = tokenizer.tokenize(text)
     tokens = [token.replace('Ġ', '') for token in tokens]
-    attention_text = generate_attention_text(tokens, last_layer_attentions)
+    attention_text = generate_attention_text(
+        tokens, last_layer_attentions, min_font_size, max_font_size)
 
     fig = plt.figure(figsize=(10, 10))
     ax = fig.add_subplot(111, projection='3d')
@@ -52,7 +55,7 @@ def generate_plot():
 
     generation_model = GPT2LMHeadModel.from_pretrained('gpt2')
     generated_output = generation_model.generate(
-        inputs, max_length=50, do_sample=True)
+        inputs, max_length=150, do_sample=True)
     generated_text = tokenizer.decode(
         generated_output[0], skip_special_tokens=True)
 

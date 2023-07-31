@@ -20,13 +20,6 @@
       </div>
       <input type="submit" value="Generate Plot" class="btn btn-primary">
     </form>
-    <div id="attention_text"> {% if attention_text %} <h2>Attention Based Text</h2>
-      <p>{{ attention_text|safe }}</p> {% endif %}
-    </div>
-    <img src="{{ url_for('static', filename='images/plot.png') }}" alt="Attention Plot" class="img-fluid">
-    <div id="generated_text"> {% if generated_text %} <h2>Generated Text</h2>
-      <p>{{ generated_text }}</p> {% endif %}
-    </div>
   </body>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/noUiSlider/14.6.3/nouislider.min.js"></script>
   <script>
@@ -36,8 +29,8 @@
       start: [12, 48],
       connect: true,
       range: {
-        'min': 1,
-        'max': 100
+        'min': 12,
+        'max': 48
       }
     });
 
