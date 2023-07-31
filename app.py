@@ -73,8 +73,10 @@ def generate_attention_text(tokens, attentions, min_font_size=10, max_font_size=
     scaled_font_sizes = min_font_size + \
         (max_font_size - min_font_size) * norm_attentions
     attention_text = ''
-    for token, font_size in zip(tokens, scaled_font_sizes):
-        attention_text += f'<span style="font-size: {font_size}pt">{token} </span>'
+    for token, font_size, attention in zip(tokens, scaled_font_sizes, norm_attentions):
+        color_intensity = int(255 * attention)
+        color = f'rgb({color_intensity}, 0, {255-color_intensity})'
+        attention_text += f'<span style="font-size: {font_size}pt; color: {color};">{token} </span>'
 
     return Markup(attention_text)
 

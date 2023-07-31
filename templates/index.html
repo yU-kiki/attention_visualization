@@ -4,6 +4,26 @@
     <title>Attention Plot</title>
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/noUiSlider/14.6.3/nouislider.min.css">
+    <style>
+      .btn-custom {
+        background-color: #007bff;
+        color: white;
+        border: none;
+        padding: 15px 32px;
+        text-align: center;
+        text-decoration: none;
+        display: inline-block;
+        font-size: 16px;
+        margin: 4px 2px;
+        transition-duration: 0.4s;
+        cursor: pointer;
+      }
+
+      .btn-custom:hover {
+        background-color: #0069d9;
+        color: white;
+      }
+    </style>
   </head>
   <body class="container">
     <h1 class="my-4">GPT-2 Attention Visualizer</h1>
@@ -18,7 +38,7 @@
         <input type="hidden" id="min_font_size" name="min_font_size">
         <input type="hidden" id="max_font_size" name="max_font_size">
       </div>
-      <input type="submit" value="Generate Plot" class="btn btn-primary">
+      <input type="submit" value="Generate Plot" class="btn-custom mb-5">
     </form>
     <div id="attention_text"> {% if attention_text %} <h2>Attention Based Text</h2>
       <p>{{ attention_text|safe }}</p> {% endif %}
