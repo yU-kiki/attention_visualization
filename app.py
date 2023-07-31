@@ -52,7 +52,7 @@ def generate_plot():
 
     generation_model = GPT2LMHeadModel.from_pretrained('gpt2')
     generated_output = generation_model.generate(
-        inputs, max_length=150, do_sample=True)
+        inputs, max_length=50, do_sample=True)
     generated_text = tokenizer.decode(
         generated_output[0], skip_special_tokens=True)
 

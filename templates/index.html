@@ -2,21 +2,42 @@
 <html>
   <head>
     <title>Attention Plot</title>
+    <!-- Add Bootstrap for styling. You may also add custom CSS. -->
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css">
   </head>
-  <body>
+  <body class="container">
+    <h1 class="my-4">GPT-2 Attention Visualizer</h1>
     <form action="/generate_plot" method="post">
-      <label for="text">Enter Text:</label>
-      <br />
-      <textarea id="text" name="text" rows="4" cols="50" required></textarea>
-      <br />
-      <input type="submit" value="Generate Plot">
+      <div class="form-group">
+        <label for="text">Enter Text:</label>
+        <textarea id="text" name="text" class="form-control" rows="4" required></textarea>
+      </div>
+      <div class="form-group">
+        <label for="min_font_size">Minimum Font Size: <span id="min_font_value">10</span></label>
+        <input type="range" id="min_font_size" name="min_font_size" min="10" max="32" class="form-control-range"
+          onchange="updateMinFontSizeValue(this.value);">
+      </div>
+      <div class="form-group">
+        <label for="max_font_size">Maximum Font Size: <span id="max_font_value">32</span></label>
+        <input type="range" id="max_font_size" name="max_font_size" min="10" max="32" class="form-control-range"
+          onchange="updateMaxFontSizeValue(this.value);">
+      </div>
+      <input type="submit" value="Generate Plot" class="btn btn-primary">
     </form>
     <div id="attention_text"> {% if attention_text %} <h2>Attention Based Text</h2>
       <p>{{ attention_text|safe }}</p> {% endif %}
     </div>
-    <img src="{{ url_for('static', filename='images/plot.png') }}" alt="Attention Plot">
+    <img src="{{ url_for('static', filename='images/plot.png') }}" alt="Attention Plot" class="img-fluid">
     <div id="generated_text"> {% if generated_text %} <h2>Generated Text</h2>
       <p>{{ generated_text }}</p> {% endif %}
     </div>
+    <script>
+      function updateMinFontSizeValue(val) {
+        document.getElementById('min_font_value').textContent = val;
+      }
+      function updateMaxFontSizeValue(val) {
+        document.getElementById('max_font_value').textContent = val;
+      }
+    </script>
   </body>
 </html>
