@@ -1,11 +1,9 @@
 import matplotlib
-from flask import Flask, render_template, url_for, request, redirect
-from matplotlib import cm
+from flask import Flask, render_template, url_for, request, redirect, Markup
+from transformers import GPT2Model, GPT2Tokenizer, GPT2LMHeadModel
 import matplotlib.pyplot as plt
-from mpl_toolkits.mplot3d import Axes3D
-from transformers import GPT2Model, GPT2Tokenizer
-import torch
 import numpy as np
+import torch
 import os
 
 matplotlib.use('Agg')
@@ -28,27 +26,55 @@ def generate_plot():
     outputs = model(inputs)
     all_layer_attentions = outputs.attentions
 
+    last_layer_attentions = all_layer_attentions[-1][0, 0, :, :].detach().numpy()
+    tokens = tokenizer.tokenize(text)
+    tokens = [token.replace('Ġ', '') for token in tokens]
+    attention_text = generate_attention_text(tokens, last_layer_attentions)
+
     fig = plt.figure(figsize=(10, 10))
     ax = fig.add_subplot(111, projection='3d')
     ax.set_xlabel('Token Position')
     ax.set_ylabel('Layer')
     ax.set_zlabel('Attention Score')
-    tokens = tokenizer.tokenize(text)
 
     for i, layer_attention in enumerate(all_layer_attentions):
         layer_attention = layer_attention[0, 0, :, :].detach().numpy()
-        X = np.array([i]*layer_attention.shape[0])
+        X = np.arange(layer_attention.shape[0])
         Y = np.arange(layer_attention.shape[1])
         X, Y = np.meshgrid(Y, X)
         Z = layer_attention
-        ax.plot_surface(X, Y, Z, cmap=cm.coolwarm)
+        ax.plot_surface(X, Y, Z, cmap='coolwarm')
 
     ax.set_xticks(np.arange(len(tokens)))
     ax.set_xticklabels(tokens, rotation=90)
 
     plt.savefig(os.path.join('static', 'images', 'plot.png'))
 
-    return redirect(url_for('home'))
+    generation_model = GPT2LMHeadModel.from_pretrained('gpt2')
+    generated_output = generation_model.generate(
+        inputs, max_length=150, do_sample=True)
+    generated_text = tokenizer.decode(
+        generated_output[0], skip_special_tokens=True)
+
+    return render_template('index.html', attention_text=attention_text, generated_text=generated_text)
+
+
+def generate_attention_text(tokens, attentions, min_font_size=10, max_font_size=32):
+    # Average attention scores over all heads
+    avg_attention = np.mean(attentions, axis=0)
+    min_val = np.min(avg_attention)
+    max_val = np.max(avg_attention)
+    norm_attentions = (avg_attention - min_val) / (max_val - min_val)
+
+    # Scale font size by attention score. Range from min_font_size to max_font_size.
+    scaled_font_sizes = min_font_size + \
+        (max_font_size - min_font_size) * norm_attentions
+    attention_text = ''
+    for token, font_size in zip(tokens, scaled_font_sizes):
+        attention_text += f'<span style="font-size: {font_size}pt">{token} </span>'
+
+    return Markup(attention_text)
+
 
 
 if __name__ == '__main__':

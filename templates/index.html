@@ -6,9 +6,17 @@
   <body>
     <form action="/generate_plot" method="post">
       <label for="text">Enter Text:</label>
-      <input type="text" id="text" name="text" required>
+      <br />
+      <textarea id="text" name="text" rows="4" cols="50" required></textarea>
+      <br />
       <input type="submit" value="Generate Plot">
     </form>
+    <div id="attention_text"> {% if attention_text %} <h2>Attention Based Text</h2>
+      <p>{{ attention_text|safe }}</p> {% endif %}
+    </div>
     <img src="{{ url_for('static', filename='images/plot.png') }}" alt="Attention Plot">
+    <div id="generated_text"> {% if generated_text %} <h2>Generated Text</h2>
+      <p>{{ generated_text }}</p> {% endif %}
+    </div>
   </body>
 </html>
