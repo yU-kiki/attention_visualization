@@ -1,0 +1,14 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Attention Plot</title>
+  </head>
+  <body>
+    <form action="/generate_plot" method="post">
+      <label for="text">Enter Text:</label>
+      <input type="text" id="text" name="text" required>
+      <input type="submit" value="Generate Plot">
+    </form>
+    <img src="{{ url_for('static', filename='images/plot.png') }}" alt="Attention Plot">
+  </body>
+</html>
